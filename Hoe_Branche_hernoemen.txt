@@ -1,0 +1,15 @@
+
+Hoe een branch wijzigen qua naamgeving, hier een voorbeeld
+
+Checkout the branch die je wilt hernoemen naar lokaal (in dit geval Branch2)
+!git checkout Branch2
+
+Rename it locally
+!git checkout -b main_werkend
+
+delete remote branch
+!git push --delete origin Branch2
+
+push the locally renamed branch to remote.
+!git push --set-upstream origin main_werkend
+
