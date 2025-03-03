@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Database Invoer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between; /* Links en rechts uitlijnen */
+        }
+        .container {
+            width: 45%;
+        }
+        .table-container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            background: #f9f9f9;
+            width: 50%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Invoerformulier (linkerkant) -->
+    <div class="container">
+        <h2>Voer gegevens vanaf hier in</h2>
+        <form id="invoerForm">
+            <label for="naam">Naam2:</label>
+            <input type="text" id="naam" name="naam" required>
+            <br><br>
+            <label for="adres">Adres2:</label>
+            <input type="text" id="adres" name="adres" required>
+            <br><br>
+            <button type="submit">Opslaan</button>
+        </form>
+        <p id="responseMessage"></p>
+    </div>
+
+    <!-- Output tabel (rechterkant) -->
+    <div class="table-container">
+        <h2>Inhoud van de tabel invoer</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Naam1</th>
+                    <th>Adres1</th>
+                </tr>
+            </thead>
+            <tbody id="dataTable">
+                <tr><td colspan="3">Laden...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // **Functie om gegevens naar de server te sturen (formulierverzending)**
+        document.getElementById("invoerForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            let formData = new FormData(this);
+            fetch("/submit", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("responseMessage").textContent = data.message;
+                fetchData();  // Direct de tabel bijwerken
+                this.reset();  // Formulier leegmaken
+            })
+            .catch(error => console.error("Fout bij invoer:", error));
+        });
+
+        // **Functie om gegevens op te halen en de tabel bij te werken**
+        function fetchData() {
+            fetch("/data")
+                .then(response => response.json())
+                .then(data => {
+                    let tableBody = document.getElementById("dataTable");
+                    let tableHead = document.querySelector("thead tr");
+
+                    tableBody.innerHTML = ""; // Huidige tabelinhoud wissen
+                    tableHead.innerHTML = ""; // Huidige kolomnamen wissen
+
+                    if (data.length > 0) {
+                        // Dynamisch de kolomnamen genereren op basis van de eerste rij
+                        Object.keys(data[0]).forEach(key => {
+                            let th = document.createElement("th");
+                            th.textContent = key; // Kolomnaam instellen op de sleutelnaam uit de data
+                            tableHead.appendChild(th);
+                        });
+
+                        // Rijen genereren
+                        data.forEach(row => {
+                            let tr = document.createElement("tr");
+
+                            Object.values(row).forEach(cell => {
+                                let td = document.createElement("td");
+                                td.textContent = cell !== undefined ? cell : ""; // Voorkom 'undefined'
+                                tr.appendChild(td);
+                            });
+
+                            tableBody.appendChild(tr);
+                        });
+                    }
+                })
+                .catch(error => console.error("Fout bij ophalen van data:", error));
+        }
+
+
+        // Elke 2 seconden de tabel bijwerken
+        setInterval(fetchData, 2000);
+
+        // Data direct ophalen bij het laden van de pagina
+        window.onload = fetchData;
+    </script>
+
+</body>
+</html>

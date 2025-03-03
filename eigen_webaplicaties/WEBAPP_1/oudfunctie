@@ -1,0 +1,34 @@
+function fetchData() {
+            fetch("/data")
+                .then(response => response.json())
+                .then(data => {
+                    let tableBody = document.getElementById("dataTable");
+                    let tableHead = document.querySelector("thead tr");
+
+                    tableBody.innerHTML = ""; // Huidige tabelinhoud wissen
+                    tableHead.innerHTML = ""; // Huidige kolomnamen wissen
+
+                    if (data.length > 0) {
+                        // Dynamisch de kolomnamen genereren op basis van de eerste rij
+                        Object.keys(data[0]).forEach(key => {
+                            let th = document.createElement("th");
+                            th.textContent = key; // Kolomnaam instellen op de sleutelnaam uit de data
+                            tableHead.appendChild(th);
+                        });
+
+                        // Rijen genereren
+                        data.forEach(row => {
+                            let tr = document.createElement("tr");
+
+                            Object.values(row).forEach(cell => {
+                                let td = document.createElement("td");
+                                td.textContent = cell !== undefined ? cell : ""; // Voorkom 'undefined'
+                                tr.appendChild(td);
+                            });
+
+                            tableBody.appendChild(tr);
+                        });
+                    }
+                })
+                .catch(error => console.error("Fout bij ophalen van data:", error));
+        }

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PostgreSQL Data Weergave</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        .content {
+            width: 60%;
+        }
+        .sidebar {
+            width: 35%;
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-left: 2px solid #ccc;
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h2>Welkom op de pagina</h2>
+        <p>Dit is een voorbeeldpagina waar aan de rechterkant gegevens uit een PostgreSQL-database worden weergegeven.</p>
+    </div>
+    
+    <div class="sidebar">
+        <h2>Database Resultaten</h2>
+        <table>
+            <tr>
+                <th>Naam</th>
+                <th>Adres</th>
+            </tr>
+            {% for naam, adres in data %}
+            <tr>
+                <td>{{ naam }}</td>
+                <td>{{ adres }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>
