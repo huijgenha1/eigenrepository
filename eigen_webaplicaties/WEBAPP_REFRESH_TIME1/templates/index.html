@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Refresh</title>
+</head>
+<body>
+    <h1>Automatische Vernieuwing</h1>
+    <p>Huidige tijd: <span id="time">Laden...</span></p>
+
+    <script>
+        function updateTime() {
+            fetch('/time')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("time").textContent = data.time;
+                })
+                .catch(error => console.error("Fout bij ophalen van tijd:", error));
+        }
+
+        setInterval(updateTime, 1000); // Elke seconde bijwerken
+        window.onload = updateTime; // Laad meteen bij het openen
+    </script>
+</body>
+</html>

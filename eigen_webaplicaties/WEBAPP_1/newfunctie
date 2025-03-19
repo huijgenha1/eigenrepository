@@ -1,0 +1,44 @@
+function fetchData() {
+    fetch("/data")
+        .then(response => response.json())
+        .then(data => {
+            let tableBody = document.getElementById("dataTable");
+            let tableHead = document.querySelector("thead tr");
+
+            tableBody.innerHTML = ""; // Huidige tabelinhoud wissen
+            tableHead.innerHTML = ""; // Huidige kolomnamen wissen
+
+            if (data.length > 0) {
+                // Dynamisch de kolomnamen genereren op basis van de eerste rij
+                // Object.keys kan elke key van het object in de array 'data' halen
+                Object.keys(data[0]).forEach(key => {
+                    let th = document.createElement("th");
+                    th.textContent = key; // Kolomnaam instellen op de sleutelnaam uit de data
+                    tableHead.appendChild(th);
+                });
+
+                // Rijen genereren
+                data.forEach(row => {
+                    let tr = document.createElement("tr");
+
+                    // Voor elke rij de waarden ophalen, en de cellen toevoegen
+                    Object.values(row).forEach(cell => {
+                        let td = document.createElement("td");
+                        td.textContent = cell !== undefined ? cell : ""; // Voorkom 'undefined' of 'null'
+                        tr.appendChild(td);
+                    });
+
+                    tableBody.appendChild(tr);
+                });
+            } else {
+                // Optioneel: een melding tonen als er geen data is
+                let tr = document.createElement("tr");
+                let td = document.createElement("td");
+                td.colSpan = "100%";  // Zorgt ervoor dat de melding over alle kolommen wordt getoond
+                td.textContent = "Geen data beschikbaar";
+                tr.appendChild(td);
+                tableBody.appendChild(tr);
+            }
+        })
+        .catch(error => console.error("Fout bij ophalen van data:", error));
+}
